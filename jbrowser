@@ -1,0 +1,70 @@
+#!/usr/bin/jjs -Dnashorn.args=-fx
+// Get java stuff
+var Scene = Java.type("javafx.scene.Scene");
+var File = Java.type("java.io.File");
+var FXMLLoader = Java.type("javafx.fxml.FXMLLoader");
+var ChangeListener = javafx.beans.value.ChangeListener;
+
+load("fx:base.js");
+load("fx:controls.js");
+load("fx:graphics.js");
+load("fx:web.js");
+load("fx:fxml.js");
+
+// Get custom stuff
+var home = $ENV.PWD;
+var content_dir = "${home}/html/";
+var script_dir = "${home}/script/";
+var fxml_dir = "${home}/interface/"
+load("file://${script_dir}/webview.js");
+load("file://${script_dir}/minivents.js");
+
+	
+
+	
+/*function start(mainStage){*/
+	var mainStage = $STAGE;
+
+	/*************************************
+	######## GUI Layout Section ##########
+	**************************************/
+
+	// master layout
+	var masterPane = new BorderPane();
+
+	/******** Browser Control **************/
+	// Instantiate container browser window
+	var engine = new WebViewWrapper(
+	  function(){
+	    // nothing at the moment
+	  }
+	);
+	// make it an event emitter
+	Events(engine);
+
+	// HTML page
+	var page = 'file://' + content_dir + 'index.html';
+	engine.load(page);
+
+	/******** End Browser Control *********/
+
+	/******** Load Top Browser Bar ********/
+
+	var barFile = "interface/topbar.fxml"
+	var nav = FXMLLoader.load(new File(barFile).toURL());
+	masterPane.setTop(nav);
+
+	/******** End Top Browser Bar **********/
+
+	masterPane.setCenter(engine.webview);
+	mainStage.setWidth(1400);
+	mainStage.setHeight(800);
+
+	/**********************************
+	########### end layout ############
+	**********************************/
+	mainStage.scene=new Scene(masterPane);
+//}
+
+	
+

@@ -1,0 +1,11 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns:fx="http://javafx.com/fxml">
+  <spacing>8</spacing>
+  <children>
+    <Button text="back" />
+    <Button text="Reload" />
+    <Button text="forward" />
+    <TextField />
+  </children>
+</HBox>
