@@ -21,14 +21,13 @@ load("file://${script_dir}/webview.js");
 load("file://${script_dir}/minivents.js");
 
 function getControlById(collection,id){
-		var arr = collection.toArray();
+		var arr = collection.getChildren().toArray();
 		for each(i in arr){
 			if(typeof i.id != 'undefined' && i.id != '' && id == i.id){
 				return i;
 			}
 		}
 }
-
 	
 /*function start(mainStage){*/
 	var mainStage = $STAGE;
@@ -60,7 +59,7 @@ function getControlById(collection,id){
 
 	var barFile = "interface/topbar.fxml"
 	var nav = FXMLLoader.load(new File(barFile).toURL());
-	getControlById(nav.getChildren(),'backBtn').onAction = function(){
+	getControlById(nav,'backBtn').onAction = function(){
 		print('Yippeee!!!!');
 	}
 	masterPane.setTop(nav);

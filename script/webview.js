@@ -14,6 +14,10 @@ function WebViewWrapper(onload) {
   This.engine = webview.engine;
   This.window = undefined;
   This.document = undefined;
+  This.backButton;
+  This.stopReloadBtn;
+  This.forwardBtn;
+  This.URLField;
 
   // Make sure the JavaScript is enabled.
   This.engine.javaScriptEnabled = true;
@@ -21,16 +25,22 @@ function WebViewWrapper(onload) {
   // Complete initialization when page is loaded.
   This.engine.loadWorker.stateProperty().addListener(new ChangeListener() {
     changed: function(value, oldState, newState) {
-      if (newState == Worker.State.SUCCEEDED) {
-        
-        This.document = wrap(This.engine.executeScript("document"));
-        This.window = wrap(This.engine.executeScript("window"));
-        setLocationListener();
-
-        // Call users onload function.
-        if (onload) {
-          onload(This);
-        }
+      print('**********');
+      print(Worker.State);
+      switch(newState){
+        case Worker.State.SUCCEEDED:
+          This.document = wrap(This.engine.executeScript("document"));
+          This.window = wrap(This.engine.executeScript("window"));
+          setLocationListener();
+          This.emit('LOADED');
+          // Call users onload function.
+          if (onload) {
+            onload(This);
+          }
+          break;
+        case Worker.State.RUNNING:
+          This.emit('LOADING');
+          break;
       }
     }
   });
@@ -38,12 +48,53 @@ function WebViewWrapper(onload) {
   // Divert alert message to execute command.
   This.engine.onAlert = new javafx.event.EventHandler() {
     handle: function(evt) {
-      var payload = processURL(evt.data)
-      This.hostExec(payload)
+      
     }
   };
 
-  
+  This.setBackButton = function(btn){
+    This.backButton = btn;
+    This.backButton.onAction = function(){
+      var history = This.engine.getHistory();
+      
+      if(canGoBack()){
+        runLater(function(){
+            history.get(-1);
+        });
+      }
+    }
+  };
+
+  This.setStopReloadBtn = function(btn){
+    This.stopReloadBtn = btn;
+    This.on("LOADING",function(){
+      This.stopReloadBtn.setText('Stop');
+    });
+    This.on('LOADED',function(){
+      This.stopReloadBtn.setText('Reload');
+    })
+  }
+
+  This.setForwardBtn = function(btn){
+    This.forwardBtn = btn;
+    This.forwardBtn.onAction = function(){
+      var history = This.engine.getHistory();
+      
+      if(canGoForward()){
+        runLater(function(){
+          history.go(1);
+        });
+      }
+    }
+  }
+
+  This.setURLField = function(btn){
+    This.URLField = btn;
+    This.on('CHGLOCATION',function(URL){
+      This.URLField.setText(URL);
+    });
+    
+  }
 
   // Load page from URL.
   This.load = function(url) {
@@ -61,6 +112,26 @@ function WebViewWrapper(onload) {
       "var EVENT = new CustomEvent('${This.customEventName}',{detail: '${msg}'});\n" + 
       "document.dispatchEvent(EVENT);"
     );
+  }
+
+  function canGoBack(){
+    var history = This.engine.getHistory();
+    var entryList = history.getEntries();
+    var currentIndex = history.getCurrentIndex();
+    return (currentIndex > 0);
+  }
+
+  function canGoForward(){
+    var history = This.engine.getHistory();
+    var entriesList = history.getEntries();
+    var currentIndex = history.getCurrentIndex();
+    return (currentIndex < entryList.size());
+  }
+
+  function runLater(func){
+    if(typeof func == 'function'){
+      Platform.runLater(func);
+    }
   }
 
   function setLocationListener(){

@@ -1,6 +1,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
+<?language javascript?>
+
 <HBox xmlns:fx="http://javafx.com/fxml">
+  <fx:script>
+
+  </fx:script>
   <spacing>8</spacing>
   <children>
     <Button fx:id="backBtn" text="back" />
