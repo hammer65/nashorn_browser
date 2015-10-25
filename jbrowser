@@ -10,6 +10,7 @@ load("fx:controls.js");
 load("fx:graphics.js");
 load("fx:web.js");
 load("fx:fxml.js");
+load("nashorn:mozilla_compat.js");
 
 // Get custom stuff
 var home = $ENV.PWD;
@@ -19,7 +20,14 @@ var fxml_dir = "${home}/interface/"
 load("file://${script_dir}/webview.js");
 load("file://${script_dir}/minivents.js");
 
-	
+function getControlById(collection,id){
+		var arr = collection.toArray();
+		for each(i in arr){
+			if(typeof i.id != 'undefined' && i.id != '' && id == i.id){
+				return i;
+			}
+		}
+}
 
 	
 /*function start(mainStage){*/
@@ -52,6 +60,9 @@ load("file://${script_dir}/minivents.js");
 
 	var barFile = "interface/topbar.fxml"
 	var nav = FXMLLoader.load(new File(barFile).toURL());
+	getControlById(nav.getChildren(),'backBtn').onAction = function(){
+		print('Yippeee!!!!');
+	}
 	masterPane.setTop(nav);
 
 	/******** End Top Browser Bar **********/

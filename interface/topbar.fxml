@@ -3,9 +3,12 @@
 <HBox xmlns:fx="http://javafx.com/fxml">
   <spacing>8</spacing>
   <children>
-    <Button text="back" />
+    <Button fx:id="backBtn" text="back" />
     <Button text="Reload" />
     <Button text="forward" />
-    <TextField />
+    <TextField 
+      minWidth="500"
+      prefWidth="775"
+      promptText="Enter a URL" />
   </children>
 </HBox>
