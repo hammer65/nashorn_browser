@@ -93,7 +93,10 @@ function WebViewWrapper(onload) {
     });
     This.URLField.onKeyReleased = function(e){
       if(e.code == 'ENTER'){
-        processEnteredUrl(This.URLField.getText());
+        var URL = processEnteredUrl(This.URLField.getText());
+        runLater(function(){
+          This.load(URL);
+        });
       }
     }
   }
@@ -137,17 +140,22 @@ function WebViewWrapper(onload) {
   }
 
   function processEnteredUrl(strURL){
+    var out;
     try{
       var URLObj = new URL(strURL);
-    }catch(java.net.MalformedURLException){
-      var message = e.message.match(/no protocol:/);
-      print(e.message);
-      print(message);
+      out = strUrl;
+    }catch(e){
+      var message = e.message.match(/no protocol: /);
       if(message){
-
+        var split = e.message.split(':');
+        if(split[1].match(/w+\.com|org|net|edu|to|biz$/)){
+          out = 'http://' + split[1].replace(' ','');
+        }else{
+          out = 'http://google.com?q=' + split[1];
+        }
       }
     }
-    
+    return out;
   }
 
   function setLocationListener(){
