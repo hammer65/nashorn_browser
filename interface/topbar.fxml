@@ -3,16 +3,20 @@
 
 <?language javascript?>
 
-<HBox xmlns:fx="http://javafx.com/fxml">
+<HBox 
+  style="-fx-background-color: #000000;-fx-padding:10px;"
+  xmlns:fx="http://javafx.com/fxml">
   <fx:script>
 
   </fx:script>
   <spacing>8</spacing>
   <children>
     <Button fx:id="backBtn" text="back" />
-    <Button text="Reload" />
-    <Button text="forward" />
+    <Button fx:id="stopReloadBtn" text="Reload" />
+    <Button fx:id="forwardBtn" text="forward" />
     <TextField 
+      fx:id="URLField"
+      style="-fx-font-size:15px;-fx-font-family: arial;"
       minWidth="500"
       prefWidth="775"
       promptText="Enter a URL" />

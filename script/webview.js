@@ -25,8 +25,6 @@ function WebViewWrapper(onload) {
   // Complete initialization when page is loaded.
   This.engine.loadWorker.stateProperty().addListener(new ChangeListener() {
     changed: function(value, oldState, newState) {
-      print('**********');
-      print(Worker.State);
       switch(newState){
         case Worker.State.SUCCEEDED:
           This.document = wrap(This.engine.executeScript("document"));
@@ -65,7 +63,7 @@ function WebViewWrapper(onload) {
     }
   };
 
-  This.setStopReloadBtn = function(btn){
+  This.setStopReloadButton = function(btn){
     This.stopReloadBtn = btn;
     This.on("LOADING",function(){
       This.stopReloadBtn.setText('Stop');
@@ -75,7 +73,7 @@ function WebViewWrapper(onload) {
     })
   }
 
-  This.setForwardBtn = function(btn){
+  This.setForwardButton = function(btn){
     This.forwardBtn = btn;
     This.forwardBtn.onAction = function(){
       var history = This.engine.getHistory();
@@ -93,7 +91,11 @@ function WebViewWrapper(onload) {
     This.on('CHGLOCATION',function(URL){
       This.URLField.setText(URL);
     });
-    
+    This.URLField.onKeyReleased = function(e){
+      if(e.code == 'ENTER'){
+        processEnteredUrl(This.URLField.getText());
+      }
+    }
   }
 
   // Load page from URL.
@@ -132,6 +134,20 @@ function WebViewWrapper(onload) {
     if(typeof func == 'function'){
       Platform.runLater(func);
     }
+  }
+
+  function processEnteredUrl(strURL){
+    try{
+      var URLObj = new URL(strURL);
+    }catch(java.net.MalformedURLException){
+      var message = e.message.match(/no protocol:/);
+      print(e.message);
+      print(message);
+      if(message){
+
+      }
+    }
+    
   }
 
   function setLocationListener(){

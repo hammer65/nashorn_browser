@@ -49,19 +49,16 @@ function getControlById(collection,id){
 	// make it an event emitter
 	Events(engine);
 
-	// HTML page
-	var page = 'file://' + content_dir + 'index.html';
-	engine.load(page);
-
 	/******** End Browser Control *********/
 
 	/******** Load Top Browser Bar ********/
 
 	var barFile = "interface/topbar.fxml"
 	var nav = FXMLLoader.load(new File(barFile).toURL());
-	getControlById(nav,'backBtn').onAction = function(){
-		print('Yippeee!!!!');
-	}
+	engine.setBackButton(getControlById(nav,'backBtn'));
+	engine.setForwardButton(getControlById(nav,'forwardBtn'));
+	engine.setStopReloadButton(getControlById(nav,'stopReloadBtn'));
+	engine.setURLField(getControlById(nav,'URLField'));
 	masterPane.setTop(nav);
 
 	/******** End Top Browser Bar **********/
@@ -73,6 +70,10 @@ function getControlById(collection,id){
 	/**********************************
 	########### end layout ############
 	**********************************/
+	// HTML page
+	var page = 'file://' + content_dir + 'index.html';
+	engine.load(page);
+	
 	mainStage.scene=new Scene(masterPane);
 //}
 
