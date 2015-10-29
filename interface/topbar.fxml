@@ -12,7 +12,9 @@
   <spacing>8</spacing>
   <children>
     <Button fx:id="backBtn" text="back" />
-    <Button fx:id="stopReloadBtn" text="Reload" />
+    <Button 
+      prefWidth="100"
+      fx:id="stopReloadBtn" text="Reload" />
     <Button fx:id="forwardBtn" text="forward" />
     <TextField 
       fx:id="URLField"

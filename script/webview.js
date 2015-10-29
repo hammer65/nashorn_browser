@@ -14,7 +14,7 @@ function WebViewWrapper(onload) {
   This.engine = webview.engine;
   This.window = undefined;
   This.document = undefined;
-  This.backButton;
+  This.backBtn;
   This.stopReloadBtn;
   This.forwardBtn;
   This.URLField;
@@ -51,13 +51,13 @@ function WebViewWrapper(onload) {
   };
 
   This.setBackButton = function(btn){
-    This.backButton = btn;
-    This.backButton.onAction = function(){
+    This.backBtn = btn;
+    This.backBtn.onAction = function(){
       var history = This.engine.getHistory();
       
-      if(canGoBack()){
+      if(This.canGoBack()){
         runLater(function(){
-            history.get(-1);
+            history.go(-1);
         });
       }
     }
@@ -78,7 +78,7 @@ function WebViewWrapper(onload) {
     This.forwardBtn.onAction = function(){
       var history = This.engine.getHistory();
       
-      if(canGoForward()){
+      if(This.canGoForward()){
         runLater(function(){
           history.go(1);
         });
@@ -119,18 +119,18 @@ function WebViewWrapper(onload) {
     );
   }
 
-  function canGoBack(){
+  This.canGoBack = function(){
     var history = This.engine.getHistory();
     var entryList = history.getEntries();
     var currentIndex = history.getCurrentIndex();
     return (currentIndex > 0);
   }
 
-  function canGoForward(){
+  This.canGoForward = function(){
     var history = This.engine.getHistory();
-    var entriesList = history.getEntries();
+    var entryList = history.getEntries();
     var currentIndex = history.getCurrentIndex();
-    return (currentIndex < entryList.size());
+    return (currentIndex < entryList.size()-1);
   }
 
   function runLater(func){
@@ -148,10 +148,10 @@ function WebViewWrapper(onload) {
       var message = e.message.match(/no protocol: /);
       if(message){
         var split = e.message.split(':');
-        if(split[1].match(/w+\.com|org|net|edu|to|biz$/)){
+        if(split[1].match(/\.com|org|net|edu|to|biz$/)){
           out = 'http://' + split[1].replace(' ','');
         }else{
-          out = 'http://google.com?q=' + split[1];
+          out = 'http://google.com/search?q=' + split[1];
         }
       }
     }

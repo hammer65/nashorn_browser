@@ -43,7 +43,10 @@ function getControlById(collection,id){
 	// Instantiate container browser window
 	var engine = new WebViewWrapper(
 	  function(){
-	    // nothing at the moment
+	  	if(engine.backBtn && engine.forwardBtn){
+	  		engine.backBtn.setDisable(!engine.canGoBack());
+		    engine.forwardBtn.setDisable(!engine.canGoForward());
+	  	}
 	  }
 	);
 	// make it an event emitter
