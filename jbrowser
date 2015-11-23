@@ -16,69 +16,71 @@ load("nashorn:mozilla_compat.js");
 var home = $ENV.PWD;
 var content_dir = "${home}/html/";
 var script_dir = "${home}/script/";
-var fxml_dir = "${home}/interface/"
+var fxml_dir = "${home}/interface/";
+var css_dir = "${home}/css/";
 load("file://${script_dir}/webview.js");
 load("file://${script_dir}/minivents.js");
+load("file://${script_dir}/utility.js");
 
-function getControlById(collection,id){
-		var arr = collection.getChildren().toArray();
-		for each(i in arr){
-			if(typeof i.id != 'undefined' && i.id != '' && id == i.id){
-				return i;
-			}
-		}
+//preferece values
+var historyLimit = 25;
+	
+var mainStage = $STAGE;
+
+/*************************************
+######## GUI Layout Section ##########
+**************************************/
+
+// master layout
+var masterPane = new BorderPane();
+
+/******** Browser Control **************/
+// Instantiate container browser window
+var engine = new WebViewWrapper(
+  function(){
+  	if(engine.backBtn && engine.forwardBtn){
+  		engine.backBtn.setDisable(!engine.canGoBack());
+	    engine.forwardBtn.setDisable(!engine.canGoForward());
+  	}
+  }
+);
+// make it an event emitter
+Events(engine);
+
+/******** End Browser Control *********/
+
+/******** Load Top Browser Bar ********/
+
+var barFile = "interface/topbar.fxml"
+var nav = FXMLLoader.load(new File(barFile).toURL());
+engine.setBackButton(Utility.getControlById(nav,'backBtn'));
+engine.setForwardButton(Utility.getControlById(nav,'forwardBtn'));
+engine.setStopReloadButton(Utility.getControlById(nav,'stopReloadBtn'));
+engine.setURLField(Utility.getControlById(nav,'URLField'));
+var tstbtn = new Button("test");
+tstbtn.onAction = function(){
+	engine.showHistory();
 }
-	
-/*function start(mainStage){*/
-	var mainStage = $STAGE;
+nav.getChildren().addAll(tstbtn);
+masterPane.setTop(nav);
 
-	/*************************************
-	######## GUI Layout Section ##########
-	**************************************/
+/******** End Top Browser Bar **********/
 
-	// master layout
-	var masterPane = new BorderPane();
+masterPane.setCenter(engine.webview);
+mainStage.setWidth(1400);
+mainStage.setHeight(800);
 
-	/******** Browser Control **************/
-	// Instantiate container browser window
-	var engine = new WebViewWrapper(
-	  function(){
-	  	if(engine.backBtn && engine.forwardBtn){
-	  		engine.backBtn.setDisable(!engine.canGoBack());
-		    engine.forwardBtn.setDisable(!engine.canGoForward());
-	  	}
-	  }
-	);
-	// make it an event emitter
-	Events(engine);
+/**********************************
+########### end layout ############
+**********************************/
+// HTML page
+var page = 'file://' + content_dir + 'index.html';
+engine.load(page);
 
-	/******** End Browser Control *********/
-
-	/******** Load Top Browser Bar ********/
-
-	var barFile = "interface/topbar.fxml"
-	var nav = FXMLLoader.load(new File(barFile).toURL());
-	engine.setBackButton(getControlById(nav,'backBtn'));
-	engine.setForwardButton(getControlById(nav,'forwardBtn'));
-	engine.setStopReloadButton(getControlById(nav,'stopReloadBtn'));
-	engine.setURLField(getControlById(nav,'URLField'));
-	masterPane.setTop(nav);
-
-	/******** End Top Browser Bar **********/
-
-	masterPane.setCenter(engine.webview);
-	mainStage.setWidth(1400);
-	mainStage.setHeight(800);
-
-	/**********************************
-	########### end layout ############
-	**********************************/
-	// HTML page
-	var page = 'file://' + content_dir + 'index.html';
-	engine.load(page);
-	
-	mainStage.scene=new Scene(masterPane);
-//}
+mainStage.scene=new Scene(masterPane);
+function stop(){
+	engine.saveHistory();
+}
 
 	
 

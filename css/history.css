@@ -1,0 +1,12 @@
+.vbox .hbox Text{
+  -fx-font-family: ariel;
+  -fx-font-size: 16px;
+}
+
+.cell{
+  -fx-padding:8px;
+}
+
+.tbl-header{
+  -fx-background-color: #CCCCCC;
+}

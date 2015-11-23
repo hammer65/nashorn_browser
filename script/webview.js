@@ -1,5 +1,6 @@
 // load custom stuff
 load("file://${script_dir}/jsobject.js");
+load("file://${script_dir}/saved_history.js");
 // load java stuff
 var Platform = Java.type("javafx.application.Platform");
 function WebViewWrapper(onload) {
@@ -9,6 +10,7 @@ function WebViewWrapper(onload) {
   var decoder = java.net.URLDecoder.decode;
   var webview = new WebView();
   var URL = java.net.URL;
+  var savedHistory = new SavedHistory();
 
   This.webview = webview;
   This.engine = webview.engine;
@@ -131,6 +133,14 @@ function WebViewWrapper(onload) {
     var entryList = history.getEntries();
     var currentIndex = history.getCurrentIndex();
     return (currentIndex < entryList.size()-1);
+  }
+
+  This.saveHistory = function(){
+    savedHistory.save(This.engine.getHistory());
+  }
+
+  This.showHistory = function(){
+    savedHistory.display(This.engine.getHistory());
   }
 
   function runLater(func){
