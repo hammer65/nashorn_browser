@@ -35,12 +35,14 @@ function WebViewWrapper(onload) {
           This.emit('LOADED');
           // Call users onload function.
           if (onload) {
-            onload(This);
+            onload();
           }
           break;
         case Worker.State.RUNNING:
           This.emit('LOADING');
           break;
+        case Worker.State.CANCELLED:
+          This.emit("CANCELLED")
       }
     }
   });
@@ -72,8 +74,24 @@ function WebViewWrapper(onload) {
     });
     This.on('LOADED',function(){
       This.stopReloadBtn.setText('Reload');
+    });
+    This.on('CANCELLED',function(){
+      This.stopReloadBtn.setText('Reload')
     })
-  }
+    btn.onAction = function(){
+      var worker = This.engine.loadWorker;
+      print(worker.state);
+      if(worker.state == Worker.State.RUNNING){
+        runLater(function(){
+          worker.cancel();
+        });
+      }else{
+        runLater(function(){
+          This.engine.reload();
+        });
+      }
+    }
+  };
 
   This.setForwardButton = function(btn){
     This.forwardBtn = btn;
@@ -171,7 +189,7 @@ function WebViewWrapper(onload) {
   function setLocationListener(){
       This.engine.locationProperty().addListener(new ChangeListener(){
           changed: function(value, oldloc, newloc){
-            
+            This.emit('CHGLOCATION',newloc);
           }
       });
   }

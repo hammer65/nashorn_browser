@@ -41,6 +41,7 @@ var engine = new WebViewWrapper(
   	if(engine.backBtn && engine.forwardBtn){
   		engine.backBtn.setDisable(!engine.canGoBack());
 	    engine.forwardBtn.setDisable(!engine.canGoForward());
+      engine.URLField.
   	}
   }
 );
@@ -53,10 +54,10 @@ Events(engine);
 
 var barFile = "interface/topbar.fxml"
 var nav = FXMLLoader.load(new File(barFile).toURL());
-engine.setBackButton(Utility.getControlById(nav,'backBtn'));
-engine.setForwardButton(Utility.getControlById(nav,'forwardBtn'));
-engine.setStopReloadButton(Utility.getControlById(nav,'stopReloadBtn'));
-engine.setURLField(Utility.getControlById(nav,'URLField'));
+engine.setBackButton(nav.lookup('#backBtn'));
+engine.setForwardButton(nav.lookup('#forwardBtn'));
+engine.setStopReloadButton(nav.lookup('#stopReloadBtn'));
+engine.setURLField(nav.lookup('#URLField'));
 var tstbtn = new Button("test");
 tstbtn.onAction = function(){
 	engine.showHistory();
