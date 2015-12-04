@@ -7,8 +7,11 @@ function WebViewWrapper(onload) {
   var This = this;
   var WebView = Java.type("javafx.scene.web.WebView");
   var ChangeListener = javafx.beans.value.ChangeListener;
+  var MessageListener = Java.type("com.croot.messenger.MessageListener")
   var decoder = java.net.URLDecoder.decode;
   var webview = new WebView();
+  var msg =  Java.type('com.croot.messenger.Messenger');
+  var messenger = new msg(webview);
   var URL = java.net.URL;
   var savedHistory = new SavedHistory();
 
@@ -29,8 +32,16 @@ function WebViewWrapper(onload) {
     changed: function(value, oldState, newState) {
       switch(newState){
         case Worker.State.SUCCEEDED:
-          This.document = wrap(This.engine.executeScript("document"));
+          //This.document = wrap(This.engine.executeScript("document"));
+          This.document = This.engine.document
           This.window = wrap(This.engine.executeScript("window"));
+          messenger.registerHost();
+          messenger.addListener(new MessageListener(){
+            event:function(str){
+              print(str);
+            }
+          });
+         
           setLocationListener();
           This.emit('LOADED');
           // Call users onload function.
@@ -50,7 +61,7 @@ function WebViewWrapper(onload) {
   // Divert alert message to execute command.
   This.engine.onAlert = new javafx.event.EventHandler() {
     handle: function(evt) {
-      
+      print(evt.data)
     }
   };
 

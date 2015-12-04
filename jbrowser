@@ -1,4 +1,4 @@
-#!/usr/bin/jjs -Dnashorn.args=-fx
+#!/usr/bin/jjs -Dnashorn.args=-fx -cp ./java
 // Get java stuff
 var Scene = Java.type("javafx.scene.Scene");
 var File = Java.type("java.io.File");
@@ -39,9 +39,8 @@ var masterPane = new BorderPane();
 var engine = new WebViewWrapper(
   function(){
   	if(engine.backBtn && engine.forwardBtn){
-  		engine.backBtn.setDisable(!engine.canGoBack());
+  	    engine.backBtn.setDisable(!engine.canGoBack());
 	    engine.forwardBtn.setDisable(!engine.canGoForward());
-      engine.URLField.
   	}
   }
 );
