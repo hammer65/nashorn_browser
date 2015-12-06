@@ -31,7 +31,7 @@ function WebViewWrapper(onload) {
         case Worker.State.SUCCEEDED:
           This.document = wrap(This.engine.executeScript("document"));
           This.window = wrap(This.engine.executeScript("window"));
-          setLocationListener();
+          This.document.addEventListener("HOST",This.hello);
           This.emit('LOADED');
           // Call users onload function.
           if (onload) {
@@ -47,10 +47,14 @@ function WebViewWrapper(onload) {
     }
   });
 
+  This.hello = function(e){
+    print("****** #{e.detail} it worked *******");
+  }
+
   // Divert alert message to execute command.
   This.engine.onAlert = new javafx.event.EventHandler() {
     handle: function(evt) {
-      
+      print(evt.data)
     }
   };
 
@@ -80,7 +84,6 @@ function WebViewWrapper(onload) {
     })
     btn.onAction = function(){
       var worker = This.engine.loadWorker;
-      print(worker.state);
       if(worker.state == Worker.State.RUNNING){
         runLater(function(){
           worker.cancel();
@@ -175,9 +178,8 @@ function WebViewWrapper(onload) {
     }catch(e){
       var message = e.message.match(/no protocol: /);
       if(message){
-        var split = e.message.split(':');
-        if(split[1].match(/\.com|org|net|edu|to|biz$/)){
-          out = 'http://' + split[1].replace(' ','');
+        if(strURL.match(/\.com|org|net|edu|to|biz$/)){
+          out = 'http://' + strURL.replace(' ','');
         }else{
           out = 'http://google.com/search?q=' + split[1];
         }

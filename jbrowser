@@ -41,7 +41,6 @@ var engine = new WebViewWrapper(
   	if(engine.backBtn && engine.forwardBtn){
   		engine.backBtn.setDisable(!engine.canGoBack());
 	    engine.forwardBtn.setDisable(!engine.canGoForward());
-      engine.URLField.
   	}
   }
 );
