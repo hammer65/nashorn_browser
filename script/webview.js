@@ -9,6 +9,8 @@ function WebViewWrapper(onload) {
   var ChangeListener = javafx.beans.value.ChangeListener;
   var decoder = java.net.URLDecoder.decode;
   var webview = new WebView();
+  var msg =  Java.type('com.croot.messenger.Messenger');
+  var messenger = new msg(webview);
   var URL = java.net.URL;
   var savedHistory = new SavedHistory();
 
@@ -29,10 +31,14 @@ function WebViewWrapper(onload) {
     changed: function(value, oldState, newState) {
       switch(newState){
         case Worker.State.SUCCEEDED:
-          This.document = wrap(This.engine.executeScript("document"));
+          //This.document = wrap(This.engine.executeScript("document"));
+          This.document = This.engine.document
           This.window = wrap(This.engine.executeScript("window"));
-          This.document.addEventListener("HOST",This.hello);
+         
+          setLocationListener();
+
           This.emit('LOADED');
+          This.emit('statuschange','loaded');
           // Call users onload function.
           if (onload) {
             onload();
@@ -40,9 +46,11 @@ function WebViewWrapper(onload) {
           break;
         case Worker.State.RUNNING:
           This.emit('LOADING');
+          This.emit('statuschange','loading:' + This.engine.location);
           break;
         case Worker.State.CANCELLED:
-          This.emit("CANCELLED")
+          This.emit("CANCELLED");
+          This.emit('statuschange','cancelled');
       }
     }
   });
@@ -55,6 +63,14 @@ function WebViewWrapper(onload) {
   This.engine.onAlert = new javafx.event.EventHandler() {
     handle: function(evt) {
       print(evt.data)
+    }
+  };
+
+  This.engine.onStatusChanged = new javafx.event.EventHandler(){
+    handle: function(evt){
+      if(evt.data){
+        This.emit("statuschange",evt.data);
+      }
     }
   };
 

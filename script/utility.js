@@ -5,15 +5,6 @@ var BufferedReader = Java.type("java.io.BufferedReader");
 var InputStreamReader = Java.type("java.io.InputStreamReader");
 Utility = {
 
-  getControlById: function(collection,id){
-    var arr = collection.getChildren().toArray();
-    for each(i in arr){
-      if(typeof i.id != 'undefined' && i.id != '' && id == i.id){
-        return i;
-      }
-    }
-  },
-
   readFile: function(p){
     var outStr = '';
     var line;

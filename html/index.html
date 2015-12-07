@@ -1,12 +1,29 @@
 <html>
 <head>
   <title>Nashorn Browser</title>
-  <style>
-  	
-  </style>
+  <script type="text/Javascript">
+  function host_exists(){
+    document.getElementById("display").innerHTML = typeof HOST;
+  }
+
+  function call_it(){
+    try{
+      
+      HOST.send("hello from HTML land.");
+    }catch(e){
+      alert(e)
+    }
+     
+  }
+  </script>
   
 </head>
 <body>
 	<h1>Welcome to the Internet</h1>
+      <!--
+      <a href="#" onclick="call_it(); return false">Call it</a><br />
+      <a href="#" onclick="host_exists();">Is IT THERE??</a>
+      <div style="font-size:18px;font-weight:900" id="display"></div>
+      -->
 </body>
 </html>

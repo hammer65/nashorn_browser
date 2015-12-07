@@ -17,6 +17,9 @@ function wrap(jsobject) {
 
 // Construct a SAM to call back into Nashorn (event handling)
   function callback(func) {
+    print("****************");
+    print(typeof func);
+    print(func)
     if (typeof func == 'function') {
       switch (func.length) {
       case 0:
