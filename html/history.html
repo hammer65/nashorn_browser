@@ -1,15 +1,97 @@
 <html>
   <head>
     <title>History</title>
+    <style>
+      .history-table{
+        width:80%;
+        border:1px solid;
+      }
+
+      .history-table > thead > tr{
+        background-color:#888888;
+        color:#FFFFFF;
+      }
+
+      .history-table > tbody > tr:nth-child(odd){
+        background-color:#CCCCFF;
+      }
+    </style>
   </head>
   <body>
     <h2>Current Session</h2>
+    <a href="#" onclick="triggerUpdate(); return false">Trigger</a>
     <div id="current-session"></div>
     <h2>Saved History</h2>
-    <div id="saved"></div>
+    <div id="container"></div>
     <script src="script/react.js"></script>
     <script src="script/react-dom.js"></script>
+    <!--
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
-    <script type="text/babel" src="script/components.js"></script>
+    -->
+    <script type="text/Javascript">
+        var Table = React.createClass({
+            componentDidMount:function(){
+              var _self = this;
+              document.addEventListener("HOST",function(data){
+                _self.setState(data);
+              });
+            },
+            render: function render() {
+                var _self = this;
+
+                var thead = React.DOM.thead({key:"thead"},
+                    React.DOM.tr({key:"headrow"},
+                        this.props.cols.map(function (col,i) {
+                            console.log("key***",i);
+                            return React.DOM.th({key:i}, col);
+                    })));
+
+                var tbody = React.DOM.tbody({key:"data-body"},this.props.rows.map(function (row,id){
+                    return React.DOM.tr({key:id},
+                    _self.props.cols.map(function (col,indx) {
+                        return React.DOM.td({key:indx}, row[col] || "");
+                    }));
+                }));
+
+                return React.DOM.table({className:"history-table"}, [thead, tbody]);
+            }
+
+        });
+
+        var container = document.querySelector("#container");
+
+        var tableModel = {
+            cols: ["title", "url","date"],
+            rows: [
+              {
+                title: "Google",
+                url: "http://google.com",
+                date: new Date().toString()
+              },
+              {
+                title: "Slashdot",
+                url: "http://slashdot.org",
+                date: new Date().toString()
+              },
+              {
+                title: "Amazon",
+                url: "http://amazon.com",
+                date: new Date().toString()
+              }
+            ]
+        }
+
+        ReactDOM.render(
+          React.createElement(Table,tableModel),
+          container
+        );
+
+        var c = 0;
+        function triggerUpdate(){
+          
+          var e = new CustomEvent("HOST",newData);
+          document.dispatchEvent(e);
+        }
+    </script>
   </body>
 </html>
