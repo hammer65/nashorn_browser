@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Host test</title>
+    <script type="text/Javascript">
+    }
+    </script>
+  </head>
+  <body>
+    <a href="#" onclick="return false" data-text="blah">Test</a>
+    <div id="display">
+      
+    </div>
+    <script type="text/Javascript">
+    document.addEventListener('HOST',function(e){
+      document.getElementById("display").innerHTML = e.detail;
+    });
+    </script>
+  </body>
+</html>

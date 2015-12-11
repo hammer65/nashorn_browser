@@ -18,11 +18,11 @@
     </style>
   </head>
   <body>
-    <h2>Current Session</h2>
     <a href="#" onclick="triggerUpdate(); return false">Trigger</a>
+    <h2>Current Session</h2>
     <div id="current-session"></div>
     <h2>Saved History</h2>
-    <div id="container"></div>
+    <div id="previous-sessions"></div>
     <script src="script/react.js"></script>
     <script src="script/react-dom.js"></script>
     <!--
@@ -30,11 +30,18 @@
     -->
     <script type="text/Javascript">
         var Table = React.createClass({
+            getInitialState:function(){
+              return {rows:[]}
+            },
             componentDidMount:function(){
               var _self = this;
-              document.addEventListener("HOST",function(data){
-                _self.setState(data);
+              var eventName = "HOST:" + _self.props.eventName;
+              document.addEventListener(eventName,function(e){
+                  _self.setState({rows:e.detail});
               });
+            },
+            createCommand:function(func,id){
+              return [this.props.eventName,func,id].join("/");
             },
             render: function render() {
                 var _self = this;
@@ -42,15 +49,20 @@
                 var thead = React.DOM.thead({key:"thead"},
                     React.DOM.tr({key:"headrow"},
                         this.props.cols.map(function (col,i) {
-                            console.log("key***",i);
                             return React.DOM.th({key:i}, col);
-                    })));
+                    }).concat(React.DOM.th({key:"action"}," "))));
 
-                var tbody = React.DOM.tbody({key:"data-body"},this.props.rows.map(function (row,id){
+                var tbody = React.DOM.tbody({key:"data-body"},this.state.rows.map(function (row,id){
                     return React.DOM.tr({key:id},
                     _self.props.cols.map(function (col,indx) {
-                        return React.DOM.td({key:indx}, row[col] || "");
-                    }));
+                        var content;
+                        if(col == "url"){
+                          content = React.createElement(LinkCell,{href:row[col],dataCMD:_self.createCommand("goto",id)});
+                        }else{
+                          content = React.DOM.td({key:indx}, row[col]);
+                        }
+                        return content;
+                    }).concat(React.createElement(ActionCell,{key:"delete" + id,dataCMD:_self.createCommand("delte",id)})));
                 }));
 
                 return React.DOM.table({className:"history-table"}, [thead, tbody]);
@@ -58,38 +70,55 @@
 
         });
 
-        var container = document.querySelector("#container");
+        var ActionCell = React.createClass({
+          render: function(){
+            var attr = {
+              "data-cmd":this.props.dataCMD,
+              "href": "#",
+              onClick: function(e){e.preventDefault();} 
+            };
+            var lnk = React.DOM.a(attr,"delete");
+            return React.DOM.td({},lnk);
+          }
+        });
 
-        var tableModel = {
-            cols: ["title", "url","date"],
-            rows: [
-              {
-                title: "Google",
-                url: "http://google.com",
-                date: new Date().toString()
-              },
-              {
-                title: "Slashdot",
-                url: "http://slashdot.org",
-                date: new Date().toString()
-              },
-              {
-                title: "Amazon",
-                url: "http://amazon.com",
-                date: new Date().toString()
-              }
-            ]
-        }
+        var LinkCell = React.createClass({
+          render: function(){
+            var attr = {
+              "data-cmd":this.props.dataCMD,
+              "href": this.props.href,
+              onClick:function(e){e.preventDefault();}
+            };
+            var lnk = React.DOM.a(attr,this.props.href);
+
+            return React.DOM.td({},lnk);
+          }
+        });
+
+        var curr = document.querySelector("#current-session");
+        var prev = document.querySelector("#previous-sessions");
+        var columns = ["title","url","date"];
 
         ReactDOM.render(
-          React.createElement(Table,tableModel),
-          container
+          React.createElement(Table,{eventName: "current",cols: columns}),
+          curr
         );
 
-        var c = 0;
+        ReactDOM.render(
+          React.createElement(Table,{eventName: "previous",cols: columns}),
+          prev
+        );
+
         function triggerUpdate(){
-          
-          var e = new CustomEvent("HOST",newData);
+          payload = [
+                             {
+                               title:"Drudge Report",
+                               url:"http://drudgereport.com",
+                               date: new Date().toString()
+                             } 
+                          ];
+                           
+          var e = new CustomEvent('HOST:current',{detail:payload});
           document.dispatchEvent(e);
         }
     </script>
