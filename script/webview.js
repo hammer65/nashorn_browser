@@ -7,11 +7,9 @@ function WebViewWrapper(onload) {
   var This = this;
   var WebView = Java.type("javafx.scene.web.WebView");
   var ChangeListener = javafx.beans.value.ChangeListener;
-  var MessageListener = Java.type("com.croot.messenger.MessageListener")
+  var AlertType = javafx.scene.control.Alert.AlertType;
   var decoder = java.net.URLDecoder.decode;
   var webview = new WebView();
-  var msg =  Java.type('com.croot.messenger.Messenger');
-  var messenger = new msg(webview);
   var URL = java.net.URL;
   var savedHistory = new SavedHistory();
 
@@ -35,13 +33,7 @@ function WebViewWrapper(onload) {
           //This.document = wrap(This.engine.executeScript("document"));
           This.document = This.engine.document
           This.window = wrap(This.engine.executeScript("window"));
-          messenger.registerHost();
-          messenger.addListener(new MessageListener(){
-            event:function(str){
-              print(str);
-            }
-          });
-         
+          
           setLocationListener();
           This.emit('LOADED');
           // Call users onload function.
@@ -58,12 +50,21 @@ function WebViewWrapper(onload) {
     }
   });
 
-  // Divert alert message to execute command.
   This.engine.onAlert = new javafx.event.EventHandler() {
     handle: function(evt) {
-      print(evt.data)
+      runLater(function(){
+        Utility.dialog(AlertType.WARNING,evt.data);
+      });
     }
   };
+
+  This.engine.setConfirmHandler(function(evt){
+    return Utility.dialog(AlertType.CONFIRMATION,evt.data);
+  });
+
+  This.engine.setPromptHandler(function(evt){
+    return Utility.dialog("PROMPT",evt.data);
+  });
 
   This.setBackButton = function(btn){
     This.backBtn = btn;

@@ -4,14 +4,33 @@ var Paths = Java.type("java.nio.file.Paths");
 var BufferedReader = Java.type("java.io.BufferedReader");
 var InputStreamReader = Java.type("java.io.InputStreamReader");
 Utility = {
-
-  getControlById: function(collection,id){
-    var arr = collection.getChildren().toArray();
-    for each(i in arr){
-      if(typeof i.id != 'undefined' && i.id != '' && id == i.id){
-        return i;
+  dialog:function(type,text){
+    if(type != "PROMPT"){
+      var Alert = javafx.scene.control.Alert
+      var box = new Alert(type);
+      switch(type){
+        case Alert.AlertType.INFORMATION:
+        case Alert.AlertType.ERROR:
+        case Alert.AlertType.WARNING:
+          box.setTitle("Alert!");
+          break;
+        case Alert.AlertType.CONFIRMATION:
+          box.setTitle("Confirm");
+          break;
       }
+      box.setContentText(text);
+      var ret = box.showAndWait();
+      if(type == Alert.AlertType.CONFIRMATION){
+        ret = (ret.get() == javafx.scene.control.ButtonType.OK);
+      }
+    }else{
+      var Alert = javafx.scene.control.TextInputDialog;
+      var box = new Alert();
+      box.setContentText(text);
+      var ret = box.showAndWait();
+      ret = ret.isPresent() ? ret.get() : "";
     }
+    return ret
   },
 
   readFile: function(p){

@@ -19,6 +19,8 @@
   </head>
   <body>
     <a href="#" onclick="triggerUpdate(); return false">Trigger</a>
+    <input type="text" />
+    <br />
     <h2>Current Session</h2>
     <div id="current-session"></div>
     <h2>Saved History</h2>
@@ -62,7 +64,7 @@
                           content = React.DOM.td({key:indx}, row[col]);
                         }
                         return content;
-                    }).concat(React.createElement(ActionCell,{key:"delete" + id,dataCMD:_self.createCommand("delte",id)})));
+                    }).concat(React.createElement(ActionCell,{key:"delete" + id,dataCMD:_self.createCommand("delete",id)})));
                 }));
 
                 return React.DOM.table({className:"history-table"}, [thead, tbody]);
@@ -85,7 +87,7 @@
         var LinkCell = React.createClass({
           render: function(){
             var attr = {
-              "data-cmd":this.props.dataCMD,
+              "data-cmd":this.props.dataCMD + "/" + encodeURIComponent(this.props.href),
               "href": this.props.href,
               onClick:function(e){e.preventDefault();}
             };

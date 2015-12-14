@@ -1,10 +1,23 @@
 #!/usr/bin/jjs -Dnashorn.args=-fx -cp ./java
 // Get java stuff
-var m = Java.type("com.jbrowser.util.HostWindow");
+var WindowObj = Java.type("com.jbrowser.util.HostWindow");
+var CommandListener = Java.type("com.jbrowser.util.HostWindow.CommandListener");
 var home = $ENV.PWD;
 var file = "file://${home}/html/history.html";
-var hostWindow = new m(file);
+var hostWindow = new WindowObj(file,$STAGE);
+
+hostWindow.addCommandListener(new CommandListener(){
+  exec: function(payload){
+    print("payload",payload);
+    if(payload["function"] == "goto"){
+      print(decodeURIComponent(payload["values"][1]));
+    }else if(payload["function"] == "delete"){
+      print(payload.values[0]);
+    }
+  }
+});
 hostWindow.show();
+hostWindow.toFront();
 
 var Platform = Java.type("javafx.application.Platform");
 var Timer    = Java.type("java.util.Timer");

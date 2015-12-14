@@ -2,27 +2,32 @@
 <head>
   <title>Nashorn Browser</title>
   <script type="text/Javascript">
-  function host_exists(){
-    document.getElementById("display").innerHTML = typeof HOST;
-  }
-
-  function call_it(){
-    try{
-      
-      HOST.send("hello from HTML land.");
-    }catch(e){
-      alert(e)
+    function callIt(type){
+      var el = document.getElementById("display");
+      switch(type){
+        case "alert":
+          alert("alert dialog");
+          break;
+        case "confirm":
+          if(confirm("What is the answer?")){
+            el.innerHTML = "yes is the answer";
+          }else{
+            el.innerHTML = "no is the answer";
+          }
+          break;
+        case "prompt":
+          var res = prompt("what is your favorite color");
+          el.innerHTML = res;
+      }
     }
-     
-  }
   </script>
-    }
   
 </head>
 <body>
 	<h1>Welcome to the Internet</h1>
-      <a href="#" onclick="call_it(); return false">Call it</a><br />
-      <a href="#" onclick="host_exists();">Is IT THERE??</a>
-      <div style="font-size:18px;font-weight:900" id="display"></div>
+      <a href="#" onclick="callIt('alert'); return false;">Alert Box</a><br />
+      <a href="#" onclick="callIt('confirm'); return false;">Confirm Box</a><br />
+      <a href="#" onclick="callIt('prompt'); return false;">Prompt Box</a><br />
+      <h2 id="display"></h2>
 </body>
 </html>

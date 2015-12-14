@@ -39,7 +39,7 @@ var masterPane = new BorderPane();
 var engine = new WebViewWrapper(
   function(){
   	if(engine.backBtn && engine.forwardBtn){
-  	    engine.backBtn.setDisable(!engine.canGoBack());
+  	  engine.backBtn.setDisable(!engine.canGoBack());
 	    engine.forwardBtn.setDisable(!engine.canGoForward());
   	}
   }
@@ -57,11 +57,11 @@ engine.setBackButton(nav.lookup('#backBtn'));
 engine.setForwardButton(nav.lookup('#forwardBtn'));
 engine.setStopReloadButton(nav.lookup('#stopReloadBtn'));
 engine.setURLField(nav.lookup('#URLField'));
-var tstbtn = new Button("test");
+/*var tstbtn = new Button("test");
 tstbtn.onAction = function(){
 	engine.showHistory();
 }
-nav.getChildren().addAll(tstbtn);
+nav.getChildren().addAll(tstbtn);*/
 masterPane.setTop(nav);
 
 /******** End Top Browser Bar **********/
